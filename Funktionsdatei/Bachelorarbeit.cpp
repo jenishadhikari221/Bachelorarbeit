@@ -1,15 +1,33 @@
 #include"../Headerdatei/Bachelorarbeit.hpp"
 #include<random>
 #include<cmath>
-void random_2D_Spin(std::vector<std::vector<int>>& Spin_2D, const int& seed)
+void random_1D_Spin(std::vector<int>& Spin_1D, const int& seed,const int & N){
+    std::mt19937 random_num(seed); 
+    std::uniform_real_distribution<> dis(0, 1);
+    double random;
+        for (int j = 0; j <N; j++)
+        {
+            random = dis(random_num);
+            if(random>= 0.5){
+                Spin_1D.push_back(1);
+            }
+            else{
+                Spin_1D.push_back(-1);
+            }
+               
+          }
+
+}
+
+void random_2D_Spin(std::vector<std::vector<int>>& Spin_2D, const int& seed,const int & N)
 {
     std::mt19937 random_num(seed); 
     std::uniform_real_distribution<> dis(0, 1);
     double random;
      
-     for (int i = 0; i < Spin_2D.size(); i++)
+     for (int i = 0; i <N; i++)
      {
-          for (int j = 0; j <Spin_2D[i].size(); j++)
+          for (int j = 0; j <N; j++)
           {
             random = dis(random_num);
             if(random>= 0.5){
