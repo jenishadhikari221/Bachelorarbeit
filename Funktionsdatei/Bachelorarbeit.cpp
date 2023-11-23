@@ -64,7 +64,7 @@ void spin_configuration(const int & N, std::vector<std::vector<int>>& Spin_confi
         }
     }
 
-    double Energy_sum(const std::vector<std::vector<int>>& Spin_config){
+    double Energy_sum_2D(const std::vector<std::vector<int>>& Spin_config){
         double Energy = 0;
         int N = Spin_config.size();
         for(int i = 0 ; i<N;i++){
@@ -74,6 +74,15 @@ void spin_configuration(const int & N, std::vector<std::vector<int>>& Spin_confi
                 Spin_config[i][j]*Spin_config[(i+1+N)%N][j] +Spin_config[i][j]*Spin_config[i][(j-1+N)%N]+
                 Spin_config[i][j]*Spin_config[i][(j+1+N)%N] ;
             }
+        }
+        return std::exp(Energy);
+    }
+
+    double Energy_sum_1D(std::vector<int>& Spin_config){
+        double Energy = 0;
+        int N = Spin_config.size();
+        for(int i = 0 ; i<N;i++){
+            Energy += Spin_config[(i+N-1)%N]*Spin_config[i] + Spin_config[(i+N+1)%N]*Spin_config[i];
         }
         return std::exp(-Energy);
     }
