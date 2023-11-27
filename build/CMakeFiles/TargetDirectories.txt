@@ -1,0 +1,3 @@
+/home/jenish/Bachelorarbeit/Bachelorarbeit/build/CMakeFiles/BA.dir
+/home/jenish/Bachelorarbeit/Bachelorarbeit/build/CMakeFiles/edit_cache.dir
+/home/jenish/Bachelorarbeit/Bachelorarbeit/build/CMakeFiles/rebuild_cache.dir

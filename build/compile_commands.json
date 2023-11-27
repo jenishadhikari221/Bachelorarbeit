@@ -1,0 +1,12 @@
+[
+{
+  "directory": "/home/jenish/Bachelorarbeit/Bachelorarbeit/build",
+  "command": "/usr/bin/g++  -I/home/jenish/Bachelorarbeit/Bachelorarbeit/include -I/home/jenish/Bachelorarbeit/Bachelorarbeit/external -I/home/jenish/Bachelorarbeit/Bachelorarbeit/usr/include/python3.10 -I/home/jenish/Bachelorarbeit/Bachelorarbeit/-lpython3.10 -g -fsanitize=address -std=gnu++17 -o CMakeFiles/BA.dir/main/Bachelorarbeit.cpp.o -c /home/jenish/Bachelorarbeit/Bachelorarbeit/main/Bachelorarbeit.cpp",
+  "file": "/home/jenish/Bachelorarbeit/Bachelorarbeit/main/Bachelorarbeit.cpp"
+},
+{
+  "directory": "/home/jenish/Bachelorarbeit/Bachelorarbeit/build",
+  "command": "/usr/bin/g++  -I/home/jenish/Bachelorarbeit/Bachelorarbeit/include -I/home/jenish/Bachelorarbeit/Bachelorarbeit/external -I/home/jenish/Bachelorarbeit/Bachelorarbeit/usr/include/python3.10 -I/home/jenish/Bachelorarbeit/Bachelorarbeit/-lpython3.10 -g -fsanitize=address -std=gnu++17 -o CMakeFiles/BA.dir/Funktionsdatei/Bachelorarbeit.cpp.o -c /home/jenish/Bachelorarbeit/Bachelorarbeit/Funktionsdatei/Bachelorarbeit.cpp",
+  "file": "/home/jenish/Bachelorarbeit/Bachelorarbeit/Funktionsdatei/Bachelorarbeit.cpp"
+}
+]

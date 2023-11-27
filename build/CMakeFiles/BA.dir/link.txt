@@ -1,0 +1,1 @@
+/usr/bin/g++ -g -fsanitize=address CMakeFiles/BA.dir/main/Bachelorarbeit.cpp.o CMakeFiles/BA.dir/Funktionsdatei/Bachelorarbeit.cpp.o -o BA 
