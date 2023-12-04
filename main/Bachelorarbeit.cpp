@@ -1,5 +1,4 @@
 #include"../Headerdatei/Bachelorarbeit.hpp"
-#include"../Headerdatei/matplotlibcpp.h"
 #include<random>
 #include<vector>
 #include<cmath>
@@ -7,10 +6,11 @@
 #include<fstream>
 #include<iterator>
 
-namespace plt = matplotlibcpp;
 
 int main(){
-    int seed = 1221221;
+    int seed = 1211;
+    //std::mt19937 random_num(seed); // take a seed and generate random number // take random_num as an argu.
+
     //int len = 10000;
 
     /* //This portion is to generate random number and plot
@@ -73,42 +73,63 @@ int main(){
     output_file.close();  */
 
      //  2D Ising Sweep
-    int L = 50; // L is length of lattice
-    int sweep_length = 1000000;
+    int L = 5; // L is length of lattice
+    int sweep_length = 5000;
+    int A = 0;
     std::vector<std::vector<int>> Spin_2D(L,std::vector<int>(L,0));
-    std::vector<double> Energy;
-    std::vector<int> Spin_total;
-    std::vector<double> avg_spin;
-    std::vector<double> avg_energy;
-    std::vector<double> temperature;
+  
+    //int N =0;
 
-    double spin_avg;
-    random_2D_Spin(Spin_2D,seed,L);
+    std::vector<double> Energy;
+    std::vector<double> Spin_avg;
+    random_2D_Spin(Spin_2D,seed+121,L);
+    std::ofstream output_file;
+    
+    output_file.open("./build/autocorrelation9.txt");
+
+
+    /*
+        for(int i = 0;i<sweep_length;i++){       
+
+            Ising_2D_Sweep(Spin_2D,A,seed+i,0.41,E);
+            
+            output_file<< E<<std::endl; 
+
+        }
+    */
    
     
-    for(double B = 0.1;B <=2;B +=0.05){
+    for(double B = 0.2;B <=4;B +=0.05){
+        double var=0;
+        double var2=0;
 
-        Ising_2D_Sweep(Spin_2D,Energy,Spin_total,seed,sweep_length,B);
-        std::vector<int> temp(Spin_total.end()-3000,Spin_total.end());
+        double E = 0;
 
-        spin_avg = vector_1D_sum(temp);
-        spin_avg = double(spin_avg)/(L*L*temp.size());
+     for(int i = 0;i<sweep_length;i++){  
+        Ising_2D_Sweep(Spin_2D,A,seed+(i*2+1)*(B*100),B,E);
+        if(i>1000)
+        {
+
+            Energy.push_back(Energy_sum_2D(Spin_2D));
+            Spin_avg.push_back(vector_2D_sum(Spin_2D));
+        }
         
-        avg_spin.push_back(spin_avg);
-        temperature.push_back(B); 
-                
-        Spin_total.clear(); Energy.clear();
     }
-    
-    
+        var = variance_1D_vektor(Energy);
+        var2 = variance_1D_vektor2(Energy);
+        var = var*B*B;
+        var2 = var2*B*B;
 
-    std::ofstream output_file;
-    output_file.open("./build/firstsimulation.txt");
-    for( int m = 0; m<avg_spin.size();m++){
-       output_file<<temperature[m]<<" "<< avg_spin[m]<<std::endl;
+        output_file<<1/B<<" "<< mean_1D_vektor(Spin_avg)<<" "<<var<<" "<< var2<<std::endl;
+
     }
+    
+    
+    
+    
+    
     output_file.close();  
-    std::cout<<"Done"<<std::endl;    // */
+    std::cout<<"Done"<<std::endl;   //  */
 
 
 

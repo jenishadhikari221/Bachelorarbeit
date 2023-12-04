@@ -1,9 +1,7 @@
 #include"../Headerdatei/Bachelorarbeit.hpp"
-#include"../Headerdatei/matplotlibcpp.h"
 #include<random>
 #include<cmath>
 #include<iostream>
-namespace plt = matplotlibcpp;
 
 void random_1D_Spin(std::vector<int>& Spin_1D, const int& seed,const int & N){
     std::mt19937 random_num(seed); 
@@ -29,12 +27,12 @@ void random_2D_Spin(std::vector<std::vector<int>>& Spin_2D, const int& seed,cons
     std::uniform_real_distribution<> dis(0, 1);
     double random;
      
-     for (int i = 0; i <N; i++)
+     for (int i = 0; i <N; i++) 
      {
           for (int j = 0; j<N; j++)
           {
             random = dis(random_num);
-            if(random>= 0.25){
+            if(random>= 0){
                 Spin_2D[i][j] = 1;
             }
             else{
@@ -55,7 +53,6 @@ void random_number_generator(std::vector<double> &random_number,const int & seed
     }
 
 }
-// compute up to 3 or 4
 
 void spin_configuration(const int & N, std::vector<std::vector<int>>& Spin_config, std::vector<int>& current_spin,const int& index){
     if(index == N){
@@ -68,7 +65,7 @@ void spin_configuration(const int & N, std::vector<std::vector<int>>& Spin_confi
         }
     }
 
-    double Energy_sum_2D(const std::vector<std::vector<int>>& Spin_config){
+double Energy_sum_2D(const std::vector<std::vector<int>>& Spin_config){
         double Energy = 0;
         int N = Spin_config.size();
         for(int i = 0 ; i<N;i++){
@@ -76,10 +73,10 @@ void spin_configuration(const int & N, std::vector<std::vector<int>>& Spin_confi
                 Energy += Spin_config[i][j]*(Spin_config[(i-1+N)%N][j] + Spin_config[(i+1+N)%N][j] + Spin_config[i][(j-1+N)%N]+ Spin_config[i][(j+1+N)%N]);
             }
         }
-        return -1*Energy;
+        return -1*Energy/double(4);
     }
 
-    double Energy_sum_1D(std::vector<int>& Spin_config){
+double Energy_sum_1D(std::vector<int>& Spin_config){
         double Energy = 0;
         int N = Spin_config.size();
         for(int i = 0 ; i<N;i++){
@@ -97,7 +94,7 @@ int delta_E_1D(const std::vector<int>& Spin_1D,const int & i){
 int delta_E_2D(const std::vector<std::vector<int>>& Spin_2D,const int & i,const int & j){
     int N = Spin_2D.size();
     int dE;
-    dE = 2*Spin_2D[i][j]*(Spin_2D[i][(j-1+N)%N]+Spin_2D[(i+1+N)%N][j]+Spin_2D[i][(j+1)%N]+Spin_2D[(i-1+N)%N][j]);
+    dE = Spin_2D[i][j]*(Spin_2D[i][(j-1+N)%N]+Spin_2D[(i+1+N)%N][j]+Spin_2D[i][(j+1)%N]+Spin_2D[(i-1+N)%N][j]);
     return dE;
 }
 
@@ -108,13 +105,45 @@ int vector_1D_sum(const std::vector<int>& Spin_1D){
     }
     return sum;
 }
-int vector_2D_sum(const std::vector<std::vector<int>> & Spin_2D){
+double mean_1D_vektor(const std::vector<double>& data){
+    int S = 0;
+    int N = data.size();
+    for(const int& in :data){
+        S +=in;
+    }
+    return S/double(N);
+}
+double meansquare_1D_vektor(const std::vector<double>& data){
+    int S = 0;
+    int N = data.size();
+    for(const int& in :data){
+        S +=in*in;
+    }
+    return S/double(N);
+}
+double variance_1D_vektor(const std::vector<double>& data){
+    double var;
+    double temp = mean_1D_vektor(data);
+    var = meansquare_1D_vektor(data) - temp*temp;
+    return var;
+
+}
+double variance_1D_vektor2(const std::vector<double>& data){
+    double var = 0;
+    double temp = mean_1D_vektor(data);
+    for(const double & in:data){
+        var +=(in-temp)*(in-temp);
+    }
+    return var/data.size();
+
+}
+double vector_2D_sum(const std::vector<std::vector<int>> & Spin_2D){
     int sum = 0;
     int N = Spin_2D.size();
     for(auto spin:Spin_2D){
         sum +=vector_1D_sum(spin);
     }
-    return sum;
+    return sum/double(N*N);
 }
 
 int vector_2D_sum(const std::vector<std::vector<int>> & Spin_2D,std::vector<float> & z){
@@ -147,85 +176,55 @@ void Ising_1D_Sweep(std::vector<int> & Spin_1D,std::vector<double>& Energy,std::
 
     }
 }
-void Ising_2D_Sweep(std::vector<std::vector<int>>& Spin_2D,std::vector<double>& Energy,std::vector<int>& Spin_total,const int & seed,const int & L,const double & B,const bool& namimate){
+
+void Ising_2D_Sweep(std::vector<std::vector<int>>& Spin_2D,int & A,const int & seed,const double & B,double& E){
     int N = Spin_2D.size();
-    std::mt19937 random_num(seed); // take a seed and generate random number
-    std::uniform_int_distribution<> dis(0, N-1);
-    std::uniform_real_distribution<> real_dis(0,1);
-    std::vector<float> z(N*N);
-    int I_1,I_2;
-    
-    double dE;
-    double energy = Energy_sum_2D(Spin_2D);
-    #pragma omp parallel
-    for(int i =0;i<L;i++){
-        I_1 = dis(random_num);
-        I_2 = dis(random_num);
-
-        dE = delta_E_2D(Spin_2D,I_1,I_2);
-        if(dE<0){
-            Spin_2D[I_1][I_2] = -1*Spin_2D[I_1][I_2];
-            energy +=dE;
-            Energy.push_back(energy);
-            Spin_total.push_back(vector_2D_sum(Spin_2D,z));
-        
-        }
-        
-         else if(real_dis(random_num)<std::exp(-B*dE)){
-            Spin_2D[I_1][I_2] = -1*Spin_2D[I_1][I_2];
-            energy +=dE;
-            Energy.push_back(energy);
-            Spin_total.push_back(vector_2D_sum(Spin_2D,z));
-        
-        }
-        int a = L/60;
-
-        if(namimate == true && (i %a==0)){
-            const float* zptr = &(z[0]);
-             const int colors = 1;
-            plt::clf();
-            plt::imshow(zptr, N, N, colors);
-            plt::pause(0.001);
-
-        }
-
-    }
-    //plt::save("./build/finalspin.png");
-}
-
-void Ising_2D_Sweep(std::vector<std::vector<int>>& Spin_2D,std::vector<double>& Energy,std::vector<int>& Spin_total,const int & seed,const int & L,const double & B){
-    int N = Spin_2D.size();
-    std::mt19937 random_num(seed); // take a seed and generate random number
-    std::uniform_int_distribution<> dis(0, N-1);
-    std::uniform_real_distribution<> real_dis(0,1);
-    int I_1,I_2;
-    
+    std::mt19937 random_num(seed); 
+    std::uniform_real_distribution<double> real_dis(0,1); 
     int dE;
-    double energy = Energy_sum_2D(Spin_2D);
-    #pragma omp parallel
-    for(int i =0;i<L;i++){
-        I_1 = dis(random_num);
-        I_2 = dis(random_num);
-
-        dE = delta_E_2D(Spin_2D,I_1,I_2);
+    
+    for(int i =0;i<N;i++){
+        for(int j = 0;j<N;j++){
+            
+        dE = delta_E_2D(Spin_2D,i,j);
         if(dE<=0){
-            Spin_2D[I_1][I_2] = -1*Spin_2D[I_1][I_2];
-            energy +=dE;
-            Energy.push_back(energy);
-            Spin_total.push_back(vector_2D_sum(Spin_2D));
+            Spin_2D[i][j] *= -1;
+            A +=1;
+            E += dE;
         
-        }
-         
+        }         
         else if(real_dis(random_num)<std::exp(-B*dE)){
-            Spin_2D[I_1][I_2] = -1*Spin_2D[I_1][I_2];
-            energy +=dE;
-            Energy.push_back(energy);
-            Spin_total.push_back(vector_2D_sum(Spin_2D));
+            Spin_2D[i][j] *= -1;
+            A +=1;
+            E += dE;
         
         }
+        
 
+        }
+       
     }
 }
+double autocorrelation(const std::vector<double> & data,const int & t){
+    double mean = mean_1D_vektor(data);
+    double sum1=0;
+    double sum2 =0;
+    int N=0;
+    int indx = 0;
+    double coornormal;
+    for(int i=0 ;i<data.size();i++){
+        N++;
+        sum1 += (data[i]-mean)*(data[i]-mean);
+    }
+
+    for(;indx<data.size()-t;indx++){
+        sum2 += (data[indx]-mean)*(data[indx+t]-mean);
+    }
+    return sum2*N/(sum1*indx);
+
+}
+
+
 
 
 
