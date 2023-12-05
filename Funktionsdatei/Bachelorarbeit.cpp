@@ -32,7 +32,7 @@ void random_2D_Spin(std::vector<std::vector<int>>& Spin_2D, const int& seed,cons
           for (int j = 0; j<N; j++)
           {
             random = dis(random_num);
-            if(random>= 0){
+            if(random>= 0.5){
                 Spin_2D[i][j] = 1;
             }
             else{
@@ -73,7 +73,7 @@ double Energy_sum_2D(const std::vector<std::vector<int>>& Spin_config){
                 Energy += Spin_config[i][j]*(Spin_config[(i-1+N)%N][j] + Spin_config[(i+1+N)%N][j] + Spin_config[i][(j-1+N)%N]+ Spin_config[i][(j+1+N)%N]);
             }
         }
-        return -1*Energy/double(4);
+        return -0.5*Energy;
     }
 
 double Energy_sum_1D(std::vector<int>& Spin_config){
@@ -95,31 +95,31 @@ int delta_E_2D(const std::vector<std::vector<int>>& Spin_2D,const int & i,const 
     int N = Spin_2D.size();
     int dE;
     dE = Spin_2D[i][j]*(Spin_2D[i][(j-1+N)%N]+Spin_2D[(i+1+N)%N][j]+Spin_2D[i][(j+1)%N]+Spin_2D[(i-1+N)%N][j]);
-    return dE;
+    return 2*dE;
 }
 
 int vector_1D_sum(const std::vector<int>& Spin_1D){
     int sum = 0;
-    for(const int s :Spin_1D){
+    for(const int &s :Spin_1D){
         sum +=s;
     }
     return sum;
 }
 double mean_1D_vektor(const std::vector<double>& data){
-    int S = 0;
-    int N = data.size();
+    double S = 0;
+    double N = data.size();
     for(const int& in :data){
         S +=in;
     }
-    return S/double(N);
+    return S/N;
 }
 double meansquare_1D_vektor(const std::vector<double>& data){
-    int S = 0;
-    int N = data.size();
+    double S = 0;
+    double N = data.size();
     for(const int& in :data){
         S +=in*in;
     }
-    return S/double(N);
+    return S/N;
 }
 double variance_1D_vektor(const std::vector<double>& data){
     double var;
@@ -131,19 +131,23 @@ double variance_1D_vektor(const std::vector<double>& data){
 double variance_1D_vektor2(const std::vector<double>& data){
     double var = 0;
     double temp = mean_1D_vektor(data);
+    double N = data.size();
     for(const double & in:data){
         var +=(in-temp)*(in-temp);
     }
-    return var/data.size();
+    return var/N;
 
 }
-double vector_2D_sum(const std::vector<std::vector<int>> & Spin_2D){
-    int sum = 0;
-    int N = Spin_2D.size();
-    for(auto spin:Spin_2D){
-        sum +=vector_1D_sum(spin);
+double vector_2D_sum(const std::vector<std::vector<int>> & data){
+    double sum = 0;
+    double N = data.size();
+    N = N*N;
+    for(const std::vector<int> & spin:data){
+        for(const int & in :spin){
+            sum += in;
+        }
     }
-    return sum/double(N*N);
+    return sum/N;
 }
 
 int vector_2D_sum(const std::vector<std::vector<int>> & Spin_2D,std::vector<float> & z){
@@ -177,34 +181,25 @@ void Ising_1D_Sweep(std::vector<int> & Spin_1D,std::vector<double>& Energy,std::
     }
 }
 
-void Ising_2D_Sweep(std::vector<std::vector<int>>& Spin_2D,int & A,const int & seed,const double & B,double& E){
+void Ising_2D_Sweep(std::vector<std::vector<int>>& Spin_2D,std::mt19937 &engine,const double & B){
     int N = Spin_2D.size();
-    std::mt19937 random_num(seed); 
-    std::uniform_real_distribution<double> real_dis(0,1); 
-    int dE;
-    
+    std::uniform_real_distribution<double> real_dis(0.,1.);
+    int dE;    
     for(int i =0;i<N;i++){
         for(int j = 0;j<N;j++){
             
         dE = delta_E_2D(Spin_2D,i,j);
-        if(dE<=0){
+        if(dE<=0 || (double(rand()) /RAND_MAX)<std::exp(-B*dE))
+        {
             Spin_2D[i][j] *= -1;
-            A +=1;
-            E += dE;
-        
-        }         
-        else if(real_dis(random_num)<std::exp(-B*dE)){
-            Spin_2D[i][j] *= -1;
-            A +=1;
-            E += dE;
-        
+            } 
         }
         
 
-        }
-       
     }
+       
 }
+
 double autocorrelation(const std::vector<double> & data,const int & t){
     double mean = mean_1D_vektor(data);
     double sum1=0;
