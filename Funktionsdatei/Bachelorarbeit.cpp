@@ -213,7 +213,7 @@ double autocorr(const std::vector<double> & data,const int & t){
     for(;indx<data.size()-t;indx++){
         sum2 += (data[indx]-m)*(data[indx+t]-m);
     }
-    return sum2/indx;
+    return (double) sum2;
 
 }
 

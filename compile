@@ -1,1 +1,1 @@
-g++ -std=c++17 ./main/Bachelorarbeit.cpp ./Funktionsdatei/Bachelorarbeit.cpp -o build/programm 
+g++ -std=c++17 -fsanitize=address ./main/Bachelorarbeit.cpp ./Funktionsdatei/Bachelorarbeit.cpp -o build/programm 

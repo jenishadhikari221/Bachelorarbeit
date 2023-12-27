@@ -19,10 +19,10 @@ add_compile_options(-fsanitize=address)
 add_link_options(-fsanitize=address)
 
 # Füge selbsgeschriebene Includes hinzu
-include_directories(include)
+include_directories(Headerdatei)
 # Füge externe Includes hinzu
-include_directories(external)
-include_directories(usr/include/python3.10)
+#include_directories(external)
+include_directories(/usr/include/python3.10)
 include_directories(-lpython3.10)
 
 # Baue Programme
