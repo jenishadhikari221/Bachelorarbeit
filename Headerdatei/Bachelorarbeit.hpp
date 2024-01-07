@@ -17,6 +17,7 @@ double mean(const std::vector<std::vector<std::vector<int>>> & data);
 double meansquare(const std::vector<double>& data);
 double variance(const std::vector<double>& data);
 void Ising_2D_Sweep(std::vector<std::vector<int>>& Spin_2D,std::mt19937 &engine,const double & B,double& E);
+void Ising_3D_Sweep(std::vector<std::vector<std::vector<int>>> & Spin_3D,std::mt19937 &engine,const double & B,double& E);
 double autocorr(const std::vector<double> & data,const int & t);
 int vector_2D_sum(const std::vector<std::vector<int>> & Spin_2D,std::vector<float> & z);
 double binder_cumulant(const std::vector<double> & data);

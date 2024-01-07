@@ -62,13 +62,13 @@ double Energy_sum_3D(const std::vector<std::vector<std::vector<int>>> & Spin_3D)
         for(int i = 0 ; i<N;i++){
             for(int j = 0 ; j <N;j++){
                 for( int k = 0; k<N ; k++){
-                                    Energy += 
-                                    Spin_3D[i][j][k]*(Spin_3D[(i-1+N)%N][j][k] 
-                                    + Spin_3D[(i+1+N)%N][j][k] + 
-                                    Spin_3D[i][(j-1+N)%N][k]+ 
-                                    Spin_3D[i][(j+1+N)%N][k]+
-                                    Spin_3D[i][j][(k+1+N)%N]+
-                                    Spin_3D[i][j][(i-1+N)%N]);
+                     Energy += 
+                     Spin_3D[i][j][k]*(Spin_3D[(i-1+N)%N][j][k] 
+                     + Spin_3D[(i+1+N)%N][j][k] + 
+                     Spin_3D[i][(j-1+N)%N][k]+ 
+                     Spin_3D[i][(j+1+N)%N][k]+
+                     Spin_3D[i][j][(k+1+N)%N]+
+                     Spin_3D[i][j][(k-1+N)%N]);
 
                 }
             }
@@ -86,12 +86,12 @@ int delta_E_2D(const std::vector<std::vector<int>>& Spin_2D,const int & i,const 
 int delta_E_3D(const std::vector<std::vector<std::vector<int>>> & Spin_3D,const int & i,const int & j,const int & k){
     int N = Spin_3D.size();
     int dE;
-    dE += Spin_3D[i][j][k]*(Spin_3D[(i-1+N)%N][j][k] 
+    dE = Spin_3D[i][j][k]*(Spin_3D[(i-1+N)%N][j][k] 
             + Spin_3D[(i+1+N)%N][j][k] + 
             Spin_3D[i][(j-1+N)%N][k]+ 
             Spin_3D[i][(j+1+N)%N][k]+
             Spin_3D[i][j][(k+1+N)%N]+
-            Spin_3D[i][j][(i-1+N)%N]);
+            Spin_3D[i][j][(k-1+N)%N]);
     return 2*dE;
 }
 
@@ -203,6 +203,28 @@ void Ising_2D_Sweep(std::vector<std::vector<int>>& Spin_2D,std::mt19937 &engine,
 
     }
     
+}
+
+void Ising_3D_Sweep(std::vector<std::vector<std::vector<int>>> & Spin_3D,std::mt19937 &engine,const double & B,double& E){
+    int N = Spin_3D.size();
+    std::uniform_real_distribution<double> real_dis(0.,1.);
+    int dE;
+    
+    for(int i =0;i<N;i++){
+        for(int j = 0;j<N;j++){ 
+            for(int k = 0;k<N;k++){           
+                dE = delta_E_3D(Spin_3D,i,j,k);
+                if(dE<=0 || real_dis(engine)<std::exp(-B*dE))
+                {
+                    Spin_3D[i][j][k] *= -1;
+                    E +=dE;
+                    } 
+                }
+        
+
+        }   
+    
+    }
 }
 
 double autocorr(const std::vector<double> & data,const int & t){
